@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#46C1D1" />
+  <title>Today’s Adventure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Avenir+Next:wght@400;500;700&family=Montserrat:wght@300;400;600;800&family=Fraunces:opsz,wght@9..144,500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cyan: #46C1D1;
+      --peach: #F5A791;
+      --red: #EE3124;
+      --ink: #2A2A2A;
+      --mute: #999999;
+      --line: #E0E0E0;
+      --bg: #FAFAFA;
+      --white: #FFFFFF;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: "Montserrat", "Avenir Next", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding: 1.25rem 1.25rem 2.5rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    .shell { max-width: 420px; margin: 0 auto; }
+    .kicker {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--mute);
+      margin: 0 0 0.75rem;
+    }
+    h1 {
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 600;
+      font-size: 1.85rem;
+      line-height: 1.15;
+      margin: 0 0 0.5rem;
+      letter-spacing: -0.02em;
+    }
+    .lede { color: var(--mute); font-size: 0.95rem; line-height: 1.5; margin: 0 0 1.5rem; }
+    .hero {
+      background: var(--cyan);
+      color: white;
+      border-radius: 1.5rem;
+      padding: 1.75rem 1.4rem 1.5rem;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -20px; top: -20px;
+      width: 120px; height: 120px;
+      border: 8px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+    }
+    .hero h1 { color: white; }
+    .hero .lede { color: rgba(255,255,255,0.85); }
+    .card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 1.25rem;
+      padding: 1.25rem;
+      margin-bottom: 0.85rem;
+    }
+    .progress {
+      display: flex;
+      gap: 0.4rem;
+      margin: 0 0 1.25rem;
+      justify-content: center;
+    }
+    .pip {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--line);
+    }
+    .pip.on { background: var(--cyan); }
+    .pip.done { background: var(--peach); }
+    .btn {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      padding: 1rem 1.15rem;
+      font: inherit;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 0.55rem;
+      transition: transform 0.12s ease;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--red); color: white; }
+    .btn-cyan { background: var(--cyan); color: white; }
+    .btn-peach { background: var(--peach); color: var(--ink); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ink);
+      border: 1.5px solid var(--line);
+      font-weight: 600;
+    }
+    .btn-maps {
+      background: var(--ink);
+      color: white;
+      text-decoration: none;
+      text-align: center;
+    }
+    .mood {
+      display: grid;
+      gap: 0.55rem;
+    }
+    .mood button {
+      text-align: left;
+      background: var(--white);
+      border: 1.5px solid var(--line);
+      border-radius: 1rem;
+      padding: 1rem 1.1rem;
+      font: inherit;
+      cursor: pointer;
+    }
+    .mood button strong {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+    .mood button span {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--mute);
+      font-weight: 400;
+      line-height: 1.35;
+    }
+    .icon-row {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      display: grid;
+      place-items: center;
+      margin-bottom: 1rem;
+      border: 2px solid rgba(255,255,255,0.45);
+    }
+    .icon-row svg { width: 28px; height: 28px; stroke: white; fill: none; stroke-width: 1.6; }
+    .reveal-panel {
+      text-align: center;
+      animation: rise 0.5s ease;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: none; }
+    }
+    .stamp {
+      width: 72px; height: 72px;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+      border: 3px solid var(--cyan);
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      font-weight: 800;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .place {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 1.55rem;
+      margin: 0.25rem 0 0.5rem;
+    }
+    .detail { color: var(--mute); font-size: 0.9rem; line-height: 1.45; margin: 0 0 1rem; }
+    .hint {
+      font-size: 0.78rem;
+      color: var(--mute);
+      background: #F3F3F3;
+      border-radius: 0.75rem;
+      padding: 0.75rem 0.9rem;
+      margin: 0.75rem 0;
+      text-align: left;
+    }
+    .hidden { display: none !important; }
+    footer {
+      text-align: center;
+      font-size: 0.68rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--mute);
+      margin-top: 1.75rem;
+    }
+    .curtain {
+      position: fixed;
+      inset: 0;
+      background: var(--cyan);
+      display: grid;
+      place-items: center;
+      z-index: 20;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      transition: opacity 0.6s ease, visibility 0.6s;
+    }
+    .curtain.out { opacity: 0; visibility: hidden; pointer-events: none; }
+    .curtain h2 {
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 2rem;
+      margin: 0.5rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="curtain" id="curtain">
+    <div>
+      <p class="kicker" style="color:rgba(255,255,255,0.75)">A little something</p>
+      <h2>For us.</h2>
+      <p style="opacity:0.85; max-width:260px; margin:0.5rem auto 1.25rem; line-height:1.45; font-size:0.95rem;">Fifteen years. One day. You choose what comes next.</p>
+      <button class="btn btn-primary" id="btn-begin" style="max-width:260px; margin:0 auto;">Begin</button>
+    </div>
+  </div>
+
+  <div class="shell">
+    <div class="progress" id="progress"></div>
+
+    <!-- START: HOME / GARAGE -->
+    <section id="screen-start">
+      <div class="hero">
+        <div class="icon-row" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4l1.4-1.4M17 7l1.4-1.4"/></svg>
+        </div>
+        <p class="kicker" style="color:rgba(255,255,255,0.8)">Chapter 0 · Leave the house</p>
+        <h1>First stop: park the car.</h1>
+        <p class="lede">Head to SouthCore Garage downtown. Scooters from there. The day unfolds as you go.</p>
+        <a class="btn btn-maps" id="maps-garage" target="_blank" rel="noopener"
+           href="https://www.google.com/maps/dir/?api=1&destination=101+1st+Ave+S+St+Petersburg+FL+33701">Get directions</a>
+        <button class="btn btn-ghost" id="btn-parked" style="margin-top:0.55rem; border-color:rgba(255,255,255,0.45); color:white;">We’re parked — what’s next?</button>
+      </div>
+      <p class="hint">Sat morning flat rate often applies Oct–May · covered · ~2 min walk to the morning market. Recheck the sign when you pull in.</p>
+    </section>
+
+    <!-- MOOD -->
+    <section id="screen-mood" class="hidden">
+      <p class="kicker">Your move</p>
+      <h1>What’s calling?</h1>
+      <p class="lede">No spoilers. Pick a feeling — the place stays hidden until you commit.</p>
+      <div class="mood" id="mood-list">
+        <button type="button" data-mood="taste"><strong>Something tasty</strong><span>A nibble, a sip, a sweet pause</span></button>
+        <button type="button" data-mood="drift"><strong>Drift around</strong><span>Water, wheels, wandering</span></button>
+        <button type="button" data-mood="soft"><strong>Slow & soft</strong><span>Somewhere to sit and linger</span></button>
+        <button type="button" data-mood="feast"><strong>Real dinner</strong><span>When hunger means business</span></button>
+        <button type="button" data-mood="wild"><strong>Surprise me completely</strong><span>I’ll take whatever the day deals</span></button>
+      </div>
+      <button class="btn btn-ghost" id="btn-rain">Sky looks iffy</button>
+    </section>
+
+    <!-- COMMIT (still vague) -->
+    <section id="screen-commit" class="hidden">
+      <div class="card">
+        <p class="kicker" id="commit-kicker">Almost</p>
+        <h1 id="commit-title">Ready?</h1>
+        <p class="lede" id="commit-lede">One tap reveals where you’re going.</p>
+        <button class="btn btn-primary" id="btn-reveal">Reveal the stop</button>
+        <button class="btn btn-peach" id="btn-shuffle">Shuffle another for this mood</button>
+        <button class="btn btn-ghost" id="btn-back-mood">Different feeling</button>
+      </div>
+    </section>
+
+    <!-- REVEAL -->
+    <section id="screen-reveal" class="hidden">
+      <div class="card reveal-panel">
+        <div class="stamp">Go</div>
+        <p class="kicker" id="rev-kicker">Next stop</p>
+        <p class="place" id="rev-place"></p>
+        <p class="detail" id="rev-detail"></p>
+        <div class="hint hidden" id="rev-hint"></div>
+        <a class="btn btn-maps" id="rev-maps" target="_blank" rel="noopener">Get directions</a>
+        <button class="btn btn-cyan" id="btn-arrived">We’re here / on our way</button>
+        <button class="btn btn-ghost" id="btn-reroll">Not this — try again</button>
+      </div>
+    </section>
+
+    <!-- RAIN -->
+    <section id="screen-rain" class="hidden">
+      <div class="card reveal-panel">
+        <div class="stamp" style="border-color:var(--peach); color:var(--peach);">Plan B</div>
+        <p class="place">Soft landing</p>
+        <p class="detail">Duck indoors for a cozy sit downtown, then leave for Sarasota by about <strong>4:30–4:45</strong>. You’ve got <strong>Beso at 5:45</strong> — tapas, already held.</p>
+        <a class="btn btn-maps" target="_blank" rel="noopener"
+           href="https://www.google.com/maps/dir/?api=1&destination=30+S+Lemon+Ave+Sarasota+FL+34236">Directions to Beso</a>
+        <button class="btn btn-ghost" id="btn-rain-back">Back to choosing</button>
+      </div>
+    </section>
+
+    <footer>Little adventures · big years</footer>
+  </div>
+
+  <script>
+    const STOPS = {
+      taste: [
+        { name: "Saturday Morning Market", detail: "Al Lang area · food vendors, music, morning energy. Perfect first wander after parking.", hint: "Runs 9am–2pm. Live band today.", maps: "https://www.google.com/maps/dir/?api=1&destination=100+1st+Ave+SE+St+Petersburg+FL+33701", tag: "Morning bite" },
+        { name: "Kahwa Coffee", detail: "A good cup near the waterfront core — grab something warm and people-watch.", hint: "", maps: "https://www.google.com/maps/dir/?api=1&destination=204+2nd+Ave+S+St+Petersburg+FL+33701", tag: "Sip" },
+        { name: "Paciugo Gelato", detail: "Beach Drive gelato — small-batch, strollable.", hint: "Hyppo on Central is a solid alternate.", maps: "https://www.google.com/maps/dir/?api=1&destination=Paciugo+Gelato+300+Beach+Dr+NE+St+Petersburg+FL", tag: "Sweet" }
+      ],
+      drift: [
+        { name: "Piertoberfest", detail: "Free festival at Pier Family Park — food, games, live band in the afternoon. Beer optional; vibe required.", hint: "Band roughly 2–5. Crowds peak mid-afternoon.", maps: "https://www.google.com/maps/dir/?api=1&destination=St+Pete+Pier+Family+Park+St+Petersburg+FL", tag: "Festival" },
+        { name: "St. Pete Pier", detail: "Long waterfront wander. Open late. Scoot or stroll.", hint: "", maps: "https://www.google.com/maps/dir/?api=1&destination=St+Pete+Pier+800+2nd+Ave+NE+St+Petersburg+FL", tag: "Water" },
+        { name: "North Straub Park", detail: "Bay views, benches, soft people-watching between adventures.", hint: "Best before afternoon storms.", maps: "https://www.google.com/maps/dir/?api=1&destination=North+Straub+Park+St+Petersburg+FL", tag: "Park" },
+        { name: "Planet Retro Records", detail: "Vinyl dig on MLK — crate energy, no agenda.", hint: "Sat hours roughly 11–6.", maps: "https://www.google.com/maps/dir/?api=1&destination=Planet+Retro+226+MLK+St+N+St+Petersburg+FL", tag: "Vinyl" }
+      ],
+      soft: [
+        { name: "Southern Grounds", detail: "Bright café on Central — couches, patio, room to linger with coffee and pastries.", hint: "A lovely place to sit a while.", maps: "https://www.google.com/maps/dir/?api=1&destination=Southern+Grounds+695+Central+Ave+St+Petersburg+FL", tag: "Linger" },
+        { name: "The Book Lounge", detail: "Books, board games, soft light — an indoor nest if the sky turns.", hint: "Open late Saturday.", maps: "https://www.google.com/maps/dir/?api=1&destination=The+Book+Lounge+631+Central+Ave+St+Petersburg+FL", tag: "Books" },
+        { name: "Florida CraftArt", detail: "Free galleries on Central — only if the art itch hits.", hint: "Totally optional.", maps: "https://www.google.com/maps/dir/?api=1&destination=Florida+CraftArt+501+Central+Ave+St+Petersburg+FL", tag: "Optional art" }
+      ],
+      feast: [
+        { name: "Sushi Inc", detail: "Downtown sushi · call ahead if you can: (727) 800-9977", hint: "Walkable from the garage.", maps: "https://www.google.com/maps/dir/?api=1&destination=Sushi+Inc+270+1st+Ave+N+St+Petersburg+FL", tag: "Sushi" },
+        { name: "Malai Indian Cuisine", detail: "Central Ave Indian · dinner from 4:30 · (727) 201-8685", hint: "Walkable.", maps: "https://www.google.com/maps/dir/?api=1&destination=Malai+Indian+Cuisine+437+Central+Ave+St+Petersburg+FL", tag: "Indian" },
+        { name: "Jinju Korean BBQ", detail: "Table grill north of downtown — you’ll drive ~10–15 min. (727) 592-1400", hint: "Opens at 5.", maps: "https://www.google.com/maps/dir/?api=1&destination=Jinju+Korean+Grill+2700+34th+St+N+St+Petersburg+FL", tag: "Korean BBQ" },
+        { name: "Thai Am", detail: "Local favorite Thai farther north — drive. (727) 522-7813", hint: "", maps: "https://www.google.com/maps/dir/?api=1&destination=Thai-Am+Restaurant+6040+4th+St+N+St+Petersburg+FL", tag: "Thai" },
+        { name: "Beso · Sarasota", detail: "Your held table at 5:45 — Spanish tapas. Leave St. Pete by ~4:30–4:45.", hint: "Rain-or-shine favorite.", maps: "https://www.google.com/maps/dir/?api=1&destination=30+S+Lemon+Ave+Sarasota+FL+34236", tag: "Reserved" }
+      ]
+    };
+
+    const MOOD_COPY = {
+      taste: { kicker: "Tasty track", title: "Something delicious is waiting.", lede: "Still secret. Reveal when you’re both ready to go." },
+      drift: { kicker: "Wander track", title: "The city’s about to open up.", lede: "Wheels, water, or a festival pulse — still hidden." },
+      soft: { kicker: "Soft track", title: "A quieter chapter.", lede: "Somewhere to exhale. Name stays veiled until you tap." },
+      feast: { kicker: "Dinner track", title: "Hunger gets a destination.", lede: "One of your favorites — still under wraps." }
+    };
+
+    let done = 0;
+    let mood = null;
+    let pending = null;
+    let used = JSON.parse(localStorage.getItem("adv-used") || "[]");
+
+    const $ = (id) => document.getElementById(id);
+    const screens = ["start", "mood", "commit", "reveal", "rain"];
+
+    function show(name) {
+      screens.forEach((s) => {
+        const el = $("screen-" + s);
+        if (el) el.classList.toggle("hidden", s !== name);
+      });
+      drawPips();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function drawPips() {
+      const el = $("progress");
+      el.innerHTML = "";
+      for (let i = 0; i < 6; i++) {
+        const p = document.createElement("div");
+        p.className = "pip" + (i < done ? " done" : i === done ? " on" : "");
+        el.appendChild(p);
+      }
+    }
+
+    function pickFrom(moodKey) {
+      let pool = STOPS[moodKey].filter((s) => !used.includes(s.name));
+      if (!pool.length) pool = STOPS[moodKey].slice();
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function setPending(moodKey) {
+      mood = moodKey;
+      pending = pickFrom(moodKey);
+      const c = MOOD_COPY[moodKey];
+      $("commit-kicker").textContent = c.kicker;
+      $("commit-title").textContent = c.title;
+      $("commit-lede").textContent = c.lede;
+      show("commit");
+    }
+
+    function doReveal() {
+      if (!pending) return;
+      $("rev-kicker").textContent = pending.tag || "Next stop";
+      $("rev-place").textContent = pending.name;
+      $("rev-detail").textContent = pending.detail;
+      const hint = $("rev-hint");
+      if (pending.hint) {
+        hint.textContent = pending.hint;
+        hint.classList.remove("hidden");
+      } else hint.classList.add("hidden");
+      $("rev-maps").href = pending.maps;
+      show("reveal");
+    }
+
+    $("btn-begin").onclick = () => $("curtain").classList.add("out");
+    $("btn-parked").onclick = () => { done = Math.max(done, 1); show("mood"); };
+    $("btn-rain").onclick = () => show("rain");
+    $("btn-rain-back").onclick = () => show("mood");
+    $("btn-back-mood").onclick = () => show("mood");
+    $("btn-reveal").onclick = doReveal;
+    $("btn-shuffle").onclick = () => { if (mood) setPending(mood); };
+    $("btn-reroll").onclick = () => {
+      if (!mood) return show("mood");
+      pending = pickFrom(mood);
+      $("commit-lede").textContent = "Shuffled. Still secret until you reveal.";
+      show("commit");
+    };
+    $("btn-arrived").onclick = () => {
+      if (pending && !used.includes(pending.name)) {
+        used.push(pending.name);
+        localStorage.setItem("adv-used", JSON.stringify(used));
+      }
+      done = Math.min(6, done + 1);
+      pending = null;
+      show("mood");
+    };
+
+    document.querySelectorAll("#mood-list [data-mood]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const m = btn.dataset.mood;
+        if (m === "wild") {
+          const keys = ["taste", "drift", "soft", "feast"];
+          setPending(keys[Math.floor(Math.random() * keys.length)]);
+        } else setPending(m);
+      });
+    });
+
+    drawPips();
+  </script>
+</body>
+</html>
