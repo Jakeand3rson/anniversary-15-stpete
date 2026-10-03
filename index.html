@@ -186,6 +186,20 @@
       margin: 0.75rem 0;
       text-align: left;
     }
+    .shop {
+      text-align: left;
+      border-top: 1px solid var(--line);
+      padding: 0.9rem 0 0.15rem;
+      margin-top: 0.35rem;
+    }
+    .shop strong { display: block; font-size: 0.95rem; }
+    .shop .meta {
+      color: var(--mute);
+      font-size: 0.78rem;
+      line-height: 1.4;
+      margin: 0.25rem 0 0.55rem;
+    }
+    .shop .btn { margin-top: 0; padding: 0.7rem 1rem; font-size: 0.85rem; }
     .hidden { display: none !important; }
     footer {
       text-align: center;
@@ -252,6 +266,7 @@
       <div class="mood" id="mood-list">
         <button type="button" data-mood="taste"><strong>Something tasty</strong><span>A nibble, a sip, a sweet pause</span></button>
         <button type="button" data-mood="drift"><strong>Drift around</strong><span>Water, wheels, wandering</span></button>
+        <button type="button" data-mood="browse"><strong>Something to dig through</strong><span>Unhurried browsing, no agenda</span></button>
         <button type="button" data-mood="soft"><strong>Slow & soft</strong><span>Somewhere to sit and linger</span></button>
         <button type="button" data-mood="feast"><strong>Real dinner</strong><span>When hunger means business</span></button>
         <button type="button" data-mood="wild"><strong>Surprise me completely</strong><span>I’ll take whatever the day deals</span></button>
@@ -279,6 +294,7 @@
         <p class="place" id="rev-place"></p>
         <p class="detail" id="rev-detail"></p>
         <div class="hint hidden" id="rev-hint"></div>
+        <div id="rev-cluster" class="hidden"></div>
         <a class="btn btn-maps" id="rev-maps" target="_blank" rel="noopener">Get directions</a>
         <button class="btn btn-cyan" id="btn-arrived">We’re here / on our way</button>
         <button class="btn btn-ghost" id="btn-reroll">Not this — try again</button>
@@ -311,7 +327,13 @@
         { name: "Piertoberfest", detail: "Free festival at Pier Family Park — food, games, live band in the afternoon. Beer optional; vibe required.", hint: "Band roughly 2–5. Crowds peak mid-afternoon.", maps: "https://www.google.com/maps/dir/?api=1&destination=St+Pete+Pier+Family+Park+St+Petersburg+FL", tag: "Festival" },
         { name: "St. Pete Pier", detail: "Long waterfront wander. Open late. Scoot or stroll.", hint: "", maps: "https://www.google.com/maps/dir/?api=1&destination=St+Pete+Pier+800+2nd+Ave+NE+St+Petersburg+FL", tag: "Water" },
         { name: "North Straub Park", detail: "Bay views, benches, soft people-watching between adventures.", hint: "Best before afternoon storms.", maps: "https://www.google.com/maps/dir/?api=1&destination=North+Straub+Park+St+Petersburg+FL", tag: "Park" },
-        { name: "Planet Retro Records", detail: "Vinyl dig on MLK — crate energy, no agenda.", hint: "Sat hours roughly 11–6.", maps: "https://www.google.com/maps/dir/?api=1&destination=Planet+Retro+226+MLK+St+N+St+Petersburg+FL", tag: "Vinyl" }
+      ],
+      browse: [
+        { name: "Planet Retro Records", meta: "226 Dr MLK Jr St N · downtown · Sat 11–6. Independent vinyl.", maps: "https://www.google.com/maps/dir/?api=1&destination=226+Dr+MLK+Jr+St+N+St+Petersburg+FL" },
+        { name: "ARTpool Gallery + Records", meta: "2030 & 2000 Central Ave · Grand Central · Sat 12–5. Vintage clothing, jewelry, vinyl.", maps: "https://www.google.com/maps/dir/?api=1&destination=2030+Central+Ave+St+Petersburg+FL" },
+        { name: "Daddy Kool Records", meta: "2606 Fairfield Ave S · The Factory · Sat 11–9. Vinyl since 1985.", maps: "https://www.google.com/maps/dir/?api=1&destination=2606+Fairfield+Ave+S+St+Petersburg+FL" },
+        { name: "Asylum Sights & Sounds", meta: "6566 Central Ave · Sat 10–9:30. 70s clothing and vinyl.", maps: "https://www.google.com/maps/dir/?api=1&destination=6566+Central+Ave+St+Petersburg+FL" },
+        { name: "Electric Flamingo Vintage", meta: "4700 22nd Ave S · toward Gulfport · Sat 10–5. Multi-vendor vintage, home, records.", maps: "https://www.google.com/maps/dir/?api=1&destination=4700+22nd+Ave+S+St+Petersburg+FL" }
       ],
       soft: [
         { name: "Southern Grounds", detail: "Bright café on Central — couches, patio, room to linger with coffee and pastries.", hint: "A lovely place to sit a while.", maps: "https://www.google.com/maps/dir/?api=1&destination=Southern+Grounds+695+Central+Ave+St+Petersburg+FL", tag: "Linger" },
@@ -331,7 +353,8 @@
       taste: { kicker: "Tasty track", title: "Something delicious is waiting.", lede: "Still secret. Reveal when you’re both ready to go." },
       drift: { kicker: "Wander track", title: "The city’s about to open up.", lede: "Wheels, water, or a festival pulse — still hidden." },
       soft: { kicker: "Soft track", title: "A quieter chapter.", lede: "Somewhere to exhale. Name stays veiled until you tap." },
-      feast: { kicker: "Dinner track", title: "Hunger gets a destination.", lede: "One of your favorites — still under wraps." }
+      feast: { kicker: "Dinner track", title: "Hunger gets a destination.", lede: "One of your favorites — still under wraps." },
+      browse: { kicker: "Browse track", title: "A slow wander through shops.", lede: "A cluster, not one locked stop. Still secret until you open it." }
     };
 
     let done = 0;
@@ -369,12 +392,28 @@
 
     function setPending(moodKey) {
       mood = moodKey;
-      pending = pickFrom(moodKey);
+      if (moodKey === "browse") {
+        pending = {
+          cluster: true,
+          name: "A vintage & vinyl wander",
+          tag: "Browse",
+          detail: "Unhurried shops for clothing, jewelry, and records. Pick any, skip any. No tickets, and easy to cut short if the weather turns.",
+          hint: "Daytime, before dinner. Downtown first, then west if you want more. If storms roll in, bail and keep Beso at 5:45 (leave St. Pete by ~4:30).",
+          shops: STOPS.browse
+        };
+      } else {
+        pending = pickFrom(moodKey);
+      }
+      $("btn-shuffle").classList.toggle("hidden", moodKey === "browse");
       const c = MOOD_COPY[moodKey];
       $("commit-kicker").textContent = c.kicker;
       $("commit-title").textContent = c.title;
       $("commit-lede").textContent = c.lede;
       show("commit");
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
     }
 
     function doReveal() {
@@ -387,7 +426,20 @@
         hint.textContent = pending.hint;
         hint.classList.remove("hidden");
       } else hint.classList.add("hidden");
-      $("rev-maps").href = pending.maps;
+      const cluster = $("rev-cluster");
+      if (pending.cluster) {
+        $("rev-maps").classList.add("hidden");
+        cluster.classList.remove("hidden");
+        cluster.innerHTML = pending.shops.map((s) =>
+          '<div class="shop"><strong>' + esc(s.name) + '</strong><p class="meta">' + esc(s.meta) +
+          '</p><a class="btn btn-maps" target="_blank" rel="noopener" href="' + esc(s.maps) + '">Directions</a></div>'
+        ).join("");
+      } else {
+        cluster.classList.add("hidden");
+        cluster.innerHTML = "";
+        $("rev-maps").classList.remove("hidden");
+        $("rev-maps").href = pending.maps;
+      }
       show("reveal");
     }
 
@@ -400,6 +452,7 @@
     $("btn-shuffle").onclick = () => { if (mood) setPending(mood); };
     $("btn-reroll").onclick = () => {
       if (!mood) return show("mood");
+      if (mood === "browse") return show("mood");
       pending = pickFrom(mood);
       $("commit-lede").textContent = "Shuffled. Still secret until you reveal.";
       show("commit");
@@ -418,7 +471,7 @@
       btn.addEventListener("click", () => {
         const m = btn.dataset.mood;
         if (m === "wild") {
-          const keys = ["taste", "drift", "soft", "feast"];
+          const keys = ["taste", "drift", "soft", "feast", "browse"];
           setPending(keys[Math.floor(Math.random() * keys.length)]);
         } else setPending(m);
       });
