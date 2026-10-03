@@ -271,6 +271,7 @@
         <button type="button" data-mood="feast"><strong>Real dinner</strong><span>When hunger means business</span></button>
         <button type="button" data-mood="wild"><strong>Surprise me completely</strong><span>I’ll take whatever the day deals</span></button>
       </div>
+      <button class="btn btn-ghost" id="btn-south">Vibes are cooling</button>
       <button class="btn btn-ghost" id="btn-rain">Sky looks iffy</button>
     </section>
 
@@ -298,6 +299,44 @@
         <a class="btn btn-maps" id="rev-maps" target="_blank" rel="noopener">Get directions</a>
         <button class="btn btn-cyan" id="btn-arrived">We’re here / on our way</button>
         <button class="btn btn-ghost" id="btn-reroll">Not this — try again</button>
+      </div>
+    </section>
+
+    <!-- SOUTH: leave early for Beso area -->
+    <section id="screen-south" class="hidden">
+      <div class="card reveal-panel">
+        <div class="stamp" style="border-color:var(--peach); color:var(--peach);">South</div>
+        <p class="kicker">Leave St. Pete</p>
+        <p class="place">Beso’s neighborhood</p>
+        <p class="detail">About an hour down. Park, then window-shop and scooter while you wait. Pick any, skip any. Dinner is still Beso at 5:45.</p>
+        <div class="hint">Shops mostly close by 5. Leave St. Pete in the early afternoon if you want browsing time. Storms are more likely after 3, so this is the softer landing, not a requirement.</div>
+        <div class="shop">
+          <strong>State Street Garage</strong>
+          <p class="meta">1538 State St · covered · a short walk to Beso. First hour is free once you register the plate.</p>
+          <a class="btn btn-maps" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=1538+State+St+Sarasota+FL">Directions</a>
+        </div>
+        <div class="shop">
+          <strong>Main Street & Palm Avenue</strong>
+          <p class="meta">Storefront wander right by the garage. No tickets. Grab a scooter if you see one.</p>
+          <a class="btn btn-maps" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=Main+St+and+Palm+Ave+Sarasota+FL">Directions</a>
+        </div>
+        <div class="shop">
+          <strong>Sarasota Trading Co.</strong>
+          <p class="meta">522 S Pineapple Ave · antiques, art, heirlooms · Sat 11–5.</p>
+          <a class="btn btn-maps" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=522+S+Pineapple+Ave+Sarasota+FL">Directions</a>
+        </div>
+        <div class="shop">
+          <strong>Vinyl Vault</strong>
+          <p class="meta">400 S Washington Blvd · vinyl, a short scooter south. Listings say Sat 10:30–6; their site doesn’t post hours.</p>
+          <a class="btn btn-maps" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=400+S+Washington+Blvd+Sarasota+FL">Directions</a>
+        </div>
+        <div class="shop">
+          <strong>Canned Ham Vintage</strong>
+          <p class="meta">2081 12th St · vintage clothes, barware, mid-century · Tue–Sat 11–5. A bit farther north; skip if the sky looks mean.</p>
+          <a class="btn btn-maps" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=2081+12th+St+Sarasota+FL">Directions</a>
+        </div>
+        <a class="btn btn-maps" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=30+S+Lemon+Ave+Sarasota+FL+34236">Directions to Beso</a>
+        <button class="btn btn-ghost" id="btn-south-back">Back to choosing</button>
       </div>
     </section>
 
@@ -363,7 +402,7 @@
     let used = JSON.parse(localStorage.getItem("adv-used") || "[]");
 
     const $ = (id) => document.getElementById(id);
-    const screens = ["start", "mood", "commit", "reveal", "rain"];
+    const screens = ["start", "mood", "commit", "reveal", "rain", "south"];
 
     function show(name) {
       screens.forEach((s) => {
@@ -447,6 +486,8 @@
     $("btn-parked").onclick = () => { done = Math.max(done, 1); show("mood"); };
     $("btn-rain").onclick = () => show("rain");
     $("btn-rain-back").onclick = () => show("mood");
+    $("btn-south").onclick = () => show("south");
+    $("btn-south-back").onclick = () => show("mood");
     $("btn-back-mood").onclick = () => show("mood");
     $("btn-reveal").onclick = doReveal;
     $("btn-shuffle").onclick = () => { if (mood) setPending(mood); };
